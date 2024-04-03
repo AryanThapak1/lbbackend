@@ -128,9 +128,17 @@ exports.approveRequest = catchAsync(async (req, res, next) => {
       dueDate: futureDate.toISOString().split("T")[0], // Convert to ISO string and extract only the date part
     };
 
-    const message=template(details);
+    const message = template(details);
+    await new Promise((resolve, reject) => {
+      try {
+        sendEmail({ email: studentEmail, message });
+        resolve();
+      } catch (err) {
+        reject();
+      }
+    });
 
-    sendEmail({ email: studentEmail,message });
+    
     return res.status(200).json({
       status: "Approved",
     });
